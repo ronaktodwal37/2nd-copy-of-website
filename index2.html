@@ -1,0 +1,2842 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BookVerse — AI-Powered Book Platform</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg2: #0f0f1a;
+      --bg3: #13131f;
+      --glass: rgba(255, 255, 255, 0.04);
+      --glass2: rgba(255, 255, 255, 0.08);
+      --border: rgba(255, 255, 255, 0.08);
+      --border2: rgba(255, 255, 255, 0.15);
+      --gold: #c9a84c;
+      --gold2: #f0c96e;
+      --teal: #2dd4bf;
+      --text: #f0ede8;
+      --text2: #a09a8e;
+      --text3: #605a52;
+      --red: #e05252;
+      --green: #4ade80;
+      --radius: 14px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* SCROLLBAR */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg2);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--gold);
+      border-radius: 3px;
+    }
+
+    /* PAGE SYSTEM */
+    .page {
+      display: none;
+      min-height: 100vh;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+    }
+
+    .nav-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      height: 64px;
+      gap: 2rem;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 900;
+      color: var(--gold);
+      cursor: pointer;
+      letter-spacing: -0.5px;
+    }
+
+    .logo span {
+      color: var(--teal);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 0.25rem;
+      flex: 1;
+    }
+
+    .nav-link {
+      padding: 6px 14px;
+      font-size: 0.875rem;
+      color: var(--text2);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text);
+      background: var(--glass2);
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-left: auto;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 6px 14px;
+      gap: 8px;
+      cursor: text;
+      transition: all 0.2s;
+    }
+
+    .search-bar:hover {
+      border-color: var(--border2);
+    }
+
+    .search-bar input {
+      background: none;
+      border: none;
+      outline: none;
+      color: var(--text);
+      font-size: 0.875rem;
+      width: 160px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .search-bar input::placeholder {
+      color: var(--text3);
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 1rem;
+    }
+
+    .icon-btn:hover {
+      background: var(--glass2);
+      border-color: var(--border2);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #0a0a0f;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 99px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .btn-gold:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 20px rgba(201, 168, 76, 0.4);
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      background: var(--red);
+      color: #fff;
+      font-size: 10px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+
+    .cart-wrap {
+      position: relative;
+    }
+
+    /* HERO */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: 64px;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(201, 168, 76, 0.08) 0%, transparent 60%), radial-gradient(ellipse 50% 50% at 10% 80%, rgba(45, 212, 191, 0.06) 0%, transparent 50%);
+    }
+
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 10;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+      width: 100%;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(201, 168, 76, 0.1);
+      border: 1px solid rgba(201, 168, 76, 0.3);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      color: var(--gold);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-tag::before {
+      content: '✦';
+      font-size: 10px;
+    }
+
+    h1.hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      letter-spacing: -1px;
+    }
+
+    h1.hero-title span {
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 1.1rem;
+      color: var(--text2);
+      line-height: 1.7;
+      margin-bottom: 2.5rem;
+      max-width: 480px;
+    }
+
+    .hero-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid var(--border2);
+      color: var(--text);
+      padding: 12px 28px;
+      border-radius: 99px;
+      font-weight: 500;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .btn-outline:hover {
+      background: var(--glass2);
+      border-color: var(--gold);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold2));
+      color: #0a0a0f;
+      padding: 12px 28px;
+      border-radius: 99px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(201, 168, 76, 0.4);
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 3rem;
+    }
+
+    .stat {
+      text-align: left;
+    }
+
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    .hero-books {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      position: relative;
+    }
+
+    .hero-book {
+      border-radius: 10px;
+      overflow: hidden;
+      aspect-ratio: 2/3;
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .hero-book:nth-child(2) {
+      transform: translateY(-20px);
+    }
+
+    .hero-book img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+
+    .hero-book:hover img {
+      transform: scale(1.05);
+    }
+
+    .hero-book-glow {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    /* SECTIONS */
+    section {
+      padding: 5rem 2rem;
+    }
+
+    .section-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 2.5rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .section-title span {
+      color: var(--gold);
+    }
+
+    .see-all {
+      font-size: 0.875rem;
+      color: var(--gold);
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .see-all:hover {
+      text-decoration: underline;
+    }
+
+    /* BOOK CARDS */
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .book-card {
+      cursor: pointer;
+      group: ;
+    }
+
+    .book-cover {
+      aspect-ratio: 2/3;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      margin-bottom: 0.75rem;
+      background: var(--bg3);
+    }
+
+    .book-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s;
+    }
+
+    .book-card:hover .book-cover img {
+      transform: scale(1.06);
+    }
+
+    .book-cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .book-card:hover .book-cover-overlay {
+      opacity: 1;
+    }
+
+    .book-actions {
+      position: absolute;
+      bottom: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      transform: translateY(8px);
+      opacity: 0;
+      transition: all 0.3s;
+    }
+
+    .book-card:hover .book-actions {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .action-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-btn:hover {
+      background: rgba(201, 168, 76, 0.3);
+      border-color: var(--gold);
+    }
+
+    .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--gold);
+      color: #0a0a0f;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 99px;
+    }
+
+    .badge.free {
+      background: var(--teal);
+      color: #0a0a0f;
+    }
+
+    .badge.new {
+      background: var(--red);
+      color: #fff;
+    }
+
+    .book-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+      line-height: 1.3;
+    }
+
+    .book-author {
+      font-size: 0.8rem;
+      color: var(--text3);
+    }
+
+    .book-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 6px;
+    }
+
+    .book-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.8rem;
+      color: var(--gold);
+    }
+
+    .book-price {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .book-price.free {
+      color: var(--teal);
+    }
+
+    /* CAROUSEL */
+    .carousel-wrap {
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      display: flex;
+      gap: 1.5rem;
+      padding-bottom: 1rem;
+      scrollbar-width: none;
+    }
+
+    .carousel-wrap::-webkit-scrollbar {
+      display: none;
+    }
+
+    .carousel-item {
+      flex: 0 0 180px;
+      scroll-snap-align: start;
+    }
+
+    /* CATEGORIES */
+    .cats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .cat-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .cat-card:hover {
+      background: var(--glass2);
+      border-color: var(--gold);
+      transform: translateY(-3px);
+    }
+
+    .cat-icon {
+      font-size: 2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .cat-name {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .cat-count {
+      font-size: 0.75rem;
+      color: var(--text3);
+      margin-top: 2px;
+    }
+
+    /* TESTIMONIALS */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .testi-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+    }
+
+    .testi-quote {
+      font-size: 0.95rem;
+      color: var(--text2);
+      line-height: 1.7;
+      margin-bottom: 1.25rem;
+      font-style: italic;
+    }
+
+    .testi-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .testi-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold), var(--teal));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: #0a0a0f;
+    }
+
+    .testi-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .testi-sub {
+      font-size: 0.8rem;
+      color: var(--text3);
+    }
+
+    /* AI SECTION */
+    .ai-section {
+      background: linear-gradient(135deg, rgba(201, 168, 76, 0.05) 0%, rgba(45, 212, 191, 0.05) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3rem;
+      margin: 0 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ai-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -10%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(45, 212, 191, 0.08), transparent 70%);
+      pointer-events: none;
+    }
+
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(45, 212, 191, 0.1);
+      border: 1px solid rgba(45, 212, 191, 0.3);
+      border-radius: 99px;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      color: var(--teal);
+      font-weight: 500;
+      margin-bottom: 1rem;
+    }
+
+    .ai-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .ai-sub {
+      color: var(--text2);
+      margin-bottom: 2rem;
+      max-width: 500px;
+    }
+
+    /* PAGE HEADERS */
+    .page-header {
+      padding: 6rem 2rem 3rem;
+      background: linear-gradient(to bottom, var(--bg2), var(--bg));
+    }
+
+    .page-header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .page-header h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .breadcrumb {
+      font-size: 0.875rem;
+      color: var(--text3);
+      margin-bottom: 1rem;
+    }
+
+    .breadcrumb span {
+      color: var(--gold);
+    }
+
+    /* FILTERS */
+    .filters-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem 2rem;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .filters-bar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .filter-select {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--text);
+      font-size: 0.875rem;
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      border-color: var(--gold);
+    }
+
+    .filter-tab {
+      padding: 7px 16px;
+      border-radius: 99px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text2);
+      font-size: 0.85rem;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .filter-tab.active,
+    .filter-tab:hover {
+      background: var(--gold);
+      color: #0a0a0f;
+      border-color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* BOOK DETAIL */
+    .book-detail-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 4rem;
+      padding: 2rem;
+    }
+
+    .book-detail-cover {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+
+    .book-detail-cover img {
+      width: 100%;
+      display: block;
+    }
+
+    .book-detail-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+
+    .book-detail-author {
+      font-size: 1.1rem;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+
+    .book-detail-author:hover {
+      text-decoration: underline;
+    }
+
+    .book-detail-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
+
+    .stars {
+      color: var(--gold);
+      font-size: 1.1rem;
+    }
+
+    .rating-count {
+      color: var(--text3);
+      font-size: 0.875rem;
+    }
+
+    .book-detail-desc {
+      color: var(--text2);
+      line-height: 1.8;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+    }
+
+    .book-detail-meta {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .meta-item {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .meta-label {
+      font-size: 0.75rem;
+      color: var(--text3);
+      margin-bottom: 4px;
+    }
+
+    .meta-value {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .book-detail-btns {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-teal {
+      background: linear-gradient(135deg, var(--teal), #0ea5e9);
+      color: #0a0a0f;
+      padding: 12px 28px;
+      border-radius: 99px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 0.9rem;
+      border: none;
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+
+    .btn-teal:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(45, 212, 191, 0.3);
+    }
+
+    /* REVIEWS */
+    .reviews-section {
+      margin-top: 3rem;
+    }
+
+    .review-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .review-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+    }
+
+    .reviewer {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .review-date {
+      font-size: 0.8rem;
+      color: var(--text3);
+    }
+
+    .review-text {
+      font-size: 0.9rem;
+      color: var(--text2);
+      line-height: 1.7;
+    }
+
+    /* DASHBOARD */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 0;
+      min-height: calc(100vh - 64px);
+    }
+
+    .dash-sidebar {
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+      padding: 2rem 1rem;
+    }
+
+    .dash-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text2);
+      transition: all 0.2s;
+      margin-bottom: 4px;
+    }
+
+    .dash-nav-item:hover,
+    .dash-nav-item.active {
+      background: var(--glass2);
+      color: var(--text);
+    }
+
+    .dash-nav-item.active {
+      color: var(--gold);
+    }
+
+    .dash-content {
+      padding: 2.5rem;
+    }
+
+    .dash-content-inner {
+      max-width: 900px;
+    }
+
+    .dash-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .dash-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+    }
+
+    .dash-card-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .dash-card-label {
+      font-size: 0.8rem;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    /* CART */
+    .cart-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .cart-items {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .cart-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+    }
+
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+
+    .cart-item-img {
+      width: 56px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .cart-item-title {
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+    }
+
+    .cart-item-author {
+      font-size: 0.8rem;
+      color: var(--text3);
+    }
+
+    .cart-item-price {
+      font-weight: 700;
+      color: var(--gold);
+      margin-left: auto;
+    }
+
+    .cart-remove {
+      background: none;
+      border: none;
+      color: var(--text3);
+      cursor: pointer;
+      font-size: 1.2rem;
+      margin-left: 0.75rem;
+    }
+
+    .cart-remove:hover {
+      color: var(--red);
+    }
+
+    .order-summary {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      height: fit-content;
+      position: sticky;
+      top: 80px;
+    }
+
+    .order-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .order-row:last-of-type {
+      border-bottom: none;
+      font-weight: 700;
+      font-size: 1rem;
+      padding-top: 1rem;
+    }
+
+    .order-total {
+      display: flex;
+      justify-content: space-between;
+      padding: 1rem 0;
+      border-top: 1px solid var(--border);
+      margin-top: 1rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--gold);
+    }
+
+    /* WISHLIST / DOWNLOADS */
+    .list-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .list-table th {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 0.8rem;
+      color: var(--text3);
+      border-bottom: 1px solid var(--border);
+      font-weight: 500;
+    }
+
+    .list-table td {
+      padding: 14px 16px;
+      font-size: 0.875rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    .list-table tr:hover td {
+      background: var(--glass);
+    }
+
+    .list-table img {
+      width: 40px;
+      height: 56px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    /* SEARCH */
+    .search-results-header {
+      padding: 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .search-input-large {
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 16px 24px;
+      font-size: 1.1rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      outline: none;
+      margin-bottom: 1rem;
+    }
+
+    .search-input-large:focus {
+      border-color: var(--gold);
+    }
+
+    .search-suggestions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .suggestion-tag {
+      background: var(--glass2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      padding: 5px 14px;
+      font-size: 0.8rem;
+      color: var(--text2);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .suggestion-tag:hover {
+      background: rgba(201, 168, 76, 0.15);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* AUTHOR */
+    .author-hero {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      padding: 2rem;
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .author-avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gold);
+    }
+
+    .author-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .author-bio {
+      color: var(--text2);
+      line-height: 1.7;
+      max-width: 600px;
+      margin-top: 0.5rem;
+    }
+
+    /* BLOG */
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    .blog-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .blog-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border2);
+    }
+
+    .blog-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    .blog-body {
+      padding: 1.5rem;
+    }
+
+    .blog-tag {
+      font-size: 0.75rem;
+      color: var(--teal);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.5rem;
+    }
+
+    .blog-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.4;
+    }
+
+    .blog-excerpt {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    .blog-meta {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      color: var(--text3);
+    }
+
+    /* CONTACT */
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text2);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.2s;
+    }
+
+    .form-input:focus,
+    .form-textarea:focus {
+      border-color: var(--gold);
+    }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 140px;
+    }
+
+    /* ABOUT */
+    .about-hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .about-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      margin-bottom: 1rem;
+    }
+
+    .about-sub {
+      color: var(--text2);
+      font-size: 1.1rem;
+      line-height: 1.7;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 2rem;
+      max-width: 1280px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .about-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .about-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .about-card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .about-card-text {
+      font-size: 0.875rem;
+      color: var(--text2);
+      line-height: 1.6;
+    }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 2.5rem;
+      width: 90%;
+      max-width: 440px;
+      position: relative;
+    }
+
+    .modal-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-sub {
+      color: var(--text3);
+      font-size: 0.875rem;
+      margin-bottom: 2rem;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 1.25rem;
+      right: 1.25rem;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .modal-close:hover {
+      background: var(--glass2);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin: 1.25rem 0;
+      color: var(--text3);
+      font-size: 0.8rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .google-btn {
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+      margin-bottom: 1rem;
+    }
+
+    .google-btn:hover {
+      background: var(--glass2);
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--bg2);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      font-size: 0.9rem;
+      z-index: 3000;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success {
+      border-color: rgba(74, 222, 128, 0.4);
+    }
+
+    .toast.success::before {
+      content: '✓';
+      color: var(--green);
+    }
+
+    /* FOOTER */
+    footer {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      padding: 4rem 2rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-brand .logo {
+      font-size: 1.75rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .footer-desc {
+      font-size: 0.875rem;
+      color: var(--text3);
+      line-height: 1.7;
+      max-width: 280px;
+    }
+
+    .footer-col h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .footer-link {
+      display: block;
+      font-size: 0.875rem;
+      color: var(--text3);
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .footer-link:hover {
+      color: var(--gold);
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: var(--text3);
+    }
+
+    .socials {
+      display: flex;
+      gap: 10px;
+    }
+
+    .social-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .social-btn:hover {
+      background: rgba(201, 168, 76, 0.15);
+      border-color: var(--gold);
+    }
+
+    /* PROGRESS BAR */
+    .read-bar {
+      position: fixed;
+      top: 64px;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--teal));
+      z-index: 999;
+      transition: width 0.1s;
+      width: 0%;
+    }
+
+    /* PREVIEW MODAL */
+    .preview-content {
+      background: var(--bg);
+      border-radius: 12px;
+      padding: 2rem;
+      max-height: 60vh;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      line-height: 1.9;
+      color: var(--text2);
+    }
+
+    /* RESPONSIVE */
+    @media(max-width:768px) {
+      .hero-inner {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+      }
+
+      .hero-books {
+        display: none;
+      }
+
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dash-sidebar {
+        display: none;
+      }
+
+      .cart-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .contact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .book-detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .nav-links {
+        display: none;
+      }
+    }
+
+    /* SKELETON */
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg3) 25%, var(--glass2) 50%, var(--bg3) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+      border-radius: 8px;
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* READING MODE */
+    .reading-mode {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .reading-mode p {
+      font-size: 1.05rem;
+      line-height: 2;
+      color: var(--text2);
+      margin-bottom: 1.5rem;
+    }
+
+    /* NOTIFICATION DOT */
+    .notif-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--red);
+      position: absolute;
+      top: -2px;
+      right: -2px;
+    }
+
+    /* DARK/LIGHT TOGGLE */
+    .light-mode {
+      --bg: #f8f5f0;
+      --bg2: #f0ece5;
+      --bg3: #e8e2d9;
+      --glass: rgba(0, 0, 0, 0.04);
+      --glass2: rgba(0, 0, 0, 0.08);
+      --border: rgba(0, 0, 0, 0.08);
+      --border2: rgba(0, 0, 0, 0.15);
+      --text: #1a1612;
+      --text2: #5a5248;
+      --text3: #a09a8e;
+    }
+
+    /* AI REC CARDS */
+    .ai-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .ai-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+
+    .ai-card:hover {
+      border-color: var(--teal);
+      transform: translateY(-2px);
+    }
+
+    .ai-card img {
+      width: 56px;
+      height: 78px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .ai-card-body {
+      flex: 1;
+    }
+
+    .ai-card-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 3px;
+      line-height: 1.3;
+    }
+
+    .ai-card-reason {
+      font-size: 0.775rem;
+      color: var(--teal);
+      margin-bottom: 4px;
+    }
+
+    .ai-card-author {
+      font-size: 0.775rem;
+      color: var(--text3);
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- READ PROGRESS BAR -->
+  <div class="read-bar" id="readBar"></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <div class="logo" onclick="showPage('home')">Book<span>Verse</span></div>
+      <div class="nav-links">
+        <div class="nav-link" onclick="showPage('home')">Home</div>
+        <div class="nav-link" onclick="showPage('books')">Browse</div>
+        <div class="nav-link" onclick="showPage('ai')">AI Picks</div>
+        <div class="nav-link" onclick="showPage('blog')">Blog</div>
+        <div class="nav-link" onclick="showPage('about')">About</div>
+        <div class="nav-link" onclick="showPage('contact')">Contact</div>
+      </div>
+      <div class="nav-right">
+        <div class="search-bar" onclick="showPage('search')">
+          <span>🔍</span>
+          <input type="text" placeholder="Search books, authors..." id="navSearch" onkeyup="handleNavSearch(event)" />
+        </div>
+        <div class="icon-btn" onclick="showPage('wishlist')" title="Wishlist">❤️</div>
+        <div class="cart-wrap">
+          <div class="icon-btn" onclick="showPage('cart')" title="Cart">🛒
+            <span class="cart-count" id="cartCount">0</span>
+          </div>
+        </div>
+        <div class="icon-btn" style="position:relative;" onclick="showPage('dashboard')" title="Account">👤
+          <span class="notif-dot"></span>
+        </div>
+        <div class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">🌙</div>
+        <button class="btn-gold" onclick="openModal('authModal')">Sign In</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===== HOME PAGE ===== -->
+  <div class="page active" id="page-home">
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-grid"></div>
+      <div class="hero-inner">
+        <div>
+          <div class="hero-tag">AI-Powered Reading Platform</div>
+          <h1 class="hero-title">Discover Your<br />Next <span>Favourite</span><br />Story</h1>
+          <p class="hero-sub">Thousands of novels, classics, and bestsellers — with AI recommendations tailored to your
+            taste. Read, download, and collect.</p>
+          <div class="hero-btns">
+            <button class="btn-primary" onclick="showPage('books')">Browse Books</button>
+            <button class="btn-outline" onclick="showPage('ai')">AI Recommendations</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat">
+              <div class="stat-num">50K+</div>
+              <div class="stat-label">Books</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">1.2M</div>
+              <div class="stat-label">Readers</div>
+            </div>
+            <div class="stat">
+              <div class="stat-num">4.9★</div>
+              <div class="stat-label">Rating</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-books">
+          <div class="hero-book" onclick="showBookDetail('pride')"><img
+              src="https://covers.openlibrary.org/b/id/8739161-L.jpg" alt="Pride and Prejudice" />
+            <div class="hero-book-glow"></div>
+          </div>
+          <div class="hero-book" onclick="showBookDetail('gatsby')"><img
+              src="https://covers.openlibrary.org/b/id/7222246-L.jpg" alt="The Great Gatsby" />
+            <div class="hero-book-glow"></div>
+          </div>
+          <div class="hero-book" onclick="showBookDetail('1984')"><img
+              src="https://covers.openlibrary.org/b/id/8575708-L.jpg" alt="1984" />
+            <div class="hero-book-glow"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Books -->
+    <section>
+      <div class="section-inner">
+        <div class="section-header">
+          <div class="section-title">Featured <span>Books</span></div>
+          <div class="see-all" onclick="showPage('books')">See all →</div>
+        </div>
+        <div class="carousel-wrap" id="featuredCarousel"></div>
+      </div>
+    </section>
+
+    <!-- Categories -->
+    <section style="padding-top:0;">
+      <div class="section-inner">
+        <div class="section-header">
+          <div class="section-title">Browse <span>Categories</span></div>
+        </div>
+        <div class="cats-grid" id="categoriesGrid"></div>
+      </div>
+    </section>
+
+    <!-- AI Section -->
+    <div class="ai-section">
+      <div class="ai-badge">✦ Powered by AI</div>
+      <h2 class="ai-title">Smart Recommendations<br />Just for You</h2>
+      <p class="ai-sub">Our AI analyses your reading history and preferences to surface books you'll actually love — not
+        just bestsellers everyone else reads.</p>
+      <button class="btn-teal" onclick="showPage('ai')">Explore AI Picks →</button>
+    </div>
+
+    <!-- Trending -->
+    <section>
+      <div class="section-inner">
+        <div class="section-header">
+          <div class="section-title">Trending <span>Now</span></div>
+          <div class="see-all" onclick="showPage('books')">View all →</div>
+        </div>
+        <div class="books-grid" id="trendingGrid"></div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section style="background:var(--bg2);margin:0;padding:4rem 2rem;">
+      <div class="section-inner">
+        <div class="section-header">
+          <div class="section-title">What <span>Readers</span> Say</div>
+        </div>
+        <div class="testimonials-grid">
+          <div class="testi-card">
+            <p class="testi-quote">"BookVerse completely changed how I discover books. The AI recommendations are
+              scarily accurate — I've found authors I never would have found otherwise."</p>
+            <div class="testi-author">
+              <div class="testi-avatar">SR</div>
+              <div>
+                <div class="testi-name">Sneha Rawat</div>
+                <div class="testi-sub">Avid Reader, Mumbai</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <p class="testi-quote">"The reading experience is beautiful. Clean interface, smooth downloads, and the
+              preview mode helped me decide before purchasing. Highly recommend."</p>
+            <div class="testi-author">
+              <div class="testi-avatar">AK</div>
+              <div>
+                <div class="testi-name">Arjun Kapoor</div>
+                <div class="testi-sub">Literature Student, Delhi</div>
+              </div>
+            </div>
+          </div>
+          <div class="testi-card">
+            <p class="testi-quote">"I love the wishlist and the AI that says 'because you read X, you'll love Y'.
+              Finally a book platform that feels intelligent and personal."</p>
+            <div class="testi-author">
+              <div class="testi-avatar">PM</div>
+              <div>
+                <div class="testi-name">Priya Mehta</div>
+                <div class="testi-sub">Teacher, Bengaluru</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section>
+      <div class="section-inner" style="text-align:center;">
+        <h2 style="font-family:'Playfair Display',serif;font-size:2.5rem;margin-bottom:1rem;">Start Reading <span
+            style="color:var(--gold);">Today</span></h2>
+        <p style="color:var(--text2);margin-bottom:2rem;">Join over 1.2 million readers. Free to start, premium to
+          explore everything.</p>
+        <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+          <button class="btn-primary" onclick="openModal('authModal')">Create Free Account</button>
+          <button class="btn-outline" onclick="showPage('books')">Browse Without Account</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== BOOKS LISTING ===== -->
+  <div class="page" id="page-books">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="breadcrumb">Home / <span>Books</span></div>
+        <h1>Browse All <span style="color:var(--gold);">Books</span></h1>
+        <p style="color:var(--text2);">Explore our full catalogue — filter by genre, rating, or price.</p>
+      </div>
+    </div>
+    <div class="filters-bar">
+      <div class="filters-bar-inner">
+        <select class="filter-select" onchange="filterBooks(this.value,'genre')">
+          <option value="">All Genres</option>
+          <option>Fiction</option>
+          <option>Romance</option>
+          <option>Mystery</option>
+          <option>Sci-Fi</option>
+          <option>Fantasy</option>
+          <option>Biography</option>
+          <option>Self-Help</option>
+        </select>
+        <select class="filter-select" onchange="filterBooks(this.value,'sort')">
+          <option>Sort: Popular</option>
+          <option>Sort: Newest</option>
+          <option>Sort: Price Low</option>
+          <option>Sort: Rating</option>
+        </select>
+        <div class="filter-tab active" onclick="setPriceFilter(this,'all')">All</div>
+        <div class="filter-tab" onclick="setPriceFilter(this,'free')">Free</div>
+        <div class="filter-tab" onclick="setPriceFilter(this,'paid')">Paid</div>
+      </div>
+    </div>
+    <section>
+      <div class="section-inner">
+        <div class="books-grid" id="booksListGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== BOOK DETAIL ===== -->
+  <div class="page" id="page-detail">
+    <div class="page-header" style="padding-bottom:0;">
+      <div class="page-header-inner">
+        <div class="breadcrumb">Home / Books / <span id="detailBreadcrumb">Book</span></div>
+      </div>
+    </div>
+    <section>
+      <div class="section-inner">
+        <div class="book-detail-grid" id="bookDetailContent"></div>
+        <div id="relatedBooks" style="margin-top:3rem;"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== AI RECOMMENDATIONS ===== -->
+  <div class="page" id="page-ai">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="ai-badge" style="margin-bottom:1rem;">✦ AI-Powered</div>
+        <h1>Your <span style="color:var(--teal);">Personalised</span> Picks</h1>
+        <p style="color:var(--text2);">Based on reading patterns, genres, and preferences — curated just for you.</p>
+      </div>
+    </div>
+    <section>
+      <div class="section-inner">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:1.5rem;color:var(--gold);">
+          Because you liked classics…</h3>
+        <div class="ai-cards" id="aiCards1"></div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin:3rem 0 1.5rem;color:var(--teal);">
+          Trending in your genres</h3>
+        <div class="ai-cards" id="aiCards2"></div>
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin:3rem 0 1.5rem;">Hidden gems you'll love
+        </h3>
+        <div class="ai-cards" id="aiCards3"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="page" id="page-dashboard">
+    <div style="padding-top:64px;">
+      <div class="dashboard-grid">
+        <div class="dash-sidebar">
+          <div
+            style="font-size:0.75rem;color:var(--text3);padding:0 14px;margin-bottom:1rem;text-transform:uppercase;letter-spacing:1px;">
+            Menu</div>
+          <div class="dash-nav-item active" onclick="showDashTab('overview')">📊 Overview</div>
+          <div class="dash-nav-item" onclick="showDashTab('saved')">❤️ Saved Books</div>
+          <div class="dash-nav-item" onclick="showPage('downloads')">📥 Downloads</div>
+          <div class="dash-nav-item" onclick="showPage('wishlist')">🔖 Wishlist</div>
+          <div class="dash-nav-item" onclick="showPage('cart')">🛒 Cart</div>
+          <div style="margin-top:auto;padding-top:2rem;">
+            <div class="dash-nav-item" onclick="showPage('contact')">⚙️ Settings</div>
+            <div class="dash-nav-item" style="color:var(--red);">🚪 Sign Out</div>
+          </div>
+        </div>
+        <div class="dash-content">
+          <div class="dash-content-inner">
+            <h2 style="font-family:'Playfair Display',serif;font-size:1.75rem;margin-bottom:2rem;">Welcome back, <span
+                style="color:var(--gold);">Reader</span></h2>
+            <div class="dash-cards">
+              <div class="dash-card">
+                <div class="dash-card-num">12</div>
+                <div class="dash-card-label">Books Read</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-num">5</div>
+                <div class="dash-card-label">In Wishlist</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-num">3</div>
+                <div class="dash-card-label">Downloads</div>
+              </div>
+              <div class="dash-card">
+                <div class="dash-card-num">₹840</div>
+                <div class="dash-card-label">Total Spent</div>
+              </div>
+            </div>
+            <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;">Recently Viewed</h3>
+            <div class="carousel-wrap" id="recentlyViewed"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CART ===== -->
+  <div class="page" id="page-cart">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <h1>Your <span style="color:var(--gold);">Cart</span></h1>
+      </div>
+    </div>
+    <div class="cart-layout">
+      <div>
+        <div class="cart-items" id="cartItemsList"></div>
+        <div id="emptyCart" style="text-align:center;padding:3rem;display:none;">
+          <div style="font-size:3rem;margin-bottom:1rem;">🛒</div>
+          <p style="color:var(--text2);margin-bottom:1rem;">Your cart is empty</p>
+          <button class="btn-primary" onclick="showPage('books')">Browse Books</button>
+        </div>
+      </div>
+      <div>
+        <div class="order-summary">
+          <h3 style="font-family:'Playfair Display',serif;margin-bottom:1.5rem;">Order Summary</h3>
+          <div class="order-row"><span>Subtotal</span><span id="subtotal">₹0</span></div>
+          <div class="order-row"><span>Discount</span><span style="color:var(--green);">-₹0</span></div>
+          <div class="order-row"><span>Tax (18% GST)</span><span id="tax">₹0</span></div>
+          <div class="order-total"><span>Total</span><span id="orderTotal">₹0</span></div>
+          <button class="btn-primary" style="width:100%;margin-top:1rem;padding:14px;" onclick="checkout()">Proceed to
+            Checkout</button>
+          <button class="btn-outline" style="width:100%;margin-top:0.75rem;padding:12px;"
+            onclick="showPage('books')">Continue Shopping</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SEARCH ===== -->
+  <div class="page" id="page-search">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <h1>Search <span style="color:var(--gold);">Books</span></h1>
+      </div>
+    </div>
+    <div class="search-results-header">
+      <input class="search-input-large" type="text" placeholder="Search by title, author, genre…" id="mainSearch"
+        oninput="liveSearch(this.value)" />
+      <div class="search-suggestions">
+        <span class="suggestion-tag" onclick="doSearch('Mystery')">Mystery</span>
+        <span class="suggestion-tag" onclick="doSearch('Romance')">Romance</span>
+        <span class="suggestion-tag" onclick="doSearch('George Orwell')">George Orwell</span>
+        <span class="suggestion-tag" onclick="doSearch('Fiction')">Fiction</span>
+        <span class="suggestion-tag" onclick="doSearch('Fantasy')">Fantasy</span>
+        <span class="suggestion-tag" onclick="doSearch('Classics')">Classics</span>
+      </div>
+    </div>
+    <section>
+      <div class="section-inner">
+        <div id="searchResults" class="books-grid"></div>
+        <div id="searchEmpty" style="text-align:center;padding:3rem;display:none;">
+          <div style="font-size:3rem;margin-bottom:1rem;">🔍</div>
+          <p style="color:var(--text2);">Start typing to search…</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== DOWNLOADS ===== -->
+  <div class="page" id="page-downloads">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <h1>My <span style="color:var(--gold);">Downloads</span></h1>
+      </div>
+    </div>
+    <section>
+      <div class="section-inner">
+        <table class="list-table">
+          <thead>
+            <tr>
+              <th>Cover</th>
+              <th>Title</th>
+              <th>Author</th>
+              <th>Format</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="downloadsList"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== WISHLIST ===== -->
+  <div class="page" id="page-wishlist">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <h1>My <span style="color:var(--gold);">Wishlist</span></h1>
+      </div>
+    </div>
+    <section>
+      <div class="section-inner">
+        <div class="books-grid" id="wishlistGrid"></div>
+        <div id="emptyWishlist" style="text-align:center;padding:3rem;display:none;">
+          <div style="font-size:3rem;margin-bottom:1rem;">❤️</div>
+          <p style="color:var(--text2);margin-bottom:1rem;">No saved books yet</p>
+          <button class="btn-primary" onclick="showPage('books')">Discover Books</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== AUTHOR ===== -->
+  <div class="page" id="page-author">
+    <div style="padding-top:80px;">
+      <div class="author-hero">
+        <img class="author-avatar"
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Jane_Austen_coloured_version.jpg/440px-Jane_Austen_coloured_version.jpg"
+          alt="Author" />
+        <div>
+          <h1 class="author-name" id="authorName">Jane Austen</h1>
+          <p style="color:var(--text3);font-size:0.875rem;margin:4px 0 1rem;">1775–1817 · English Literature · 6 Major
+            Works</p>
+          <p class="author-bio" id="authorBio">Jane Austen was an English novelist known primarily for her six major
+            novels, which interpret, critique, and comment upon the British landed gentry at the end of the 18th
+            century.</p>
+        </div>
+      </div>
+      <section>
+        <div class="section-inner">
+          <h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:1.5rem;">Books by this Author
+          </h3>
+          <div class="books-grid" id="authorBooks"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ===== BLOG ===== -->
+  <div class="page" id="page-blog">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <h1>Articles & <span style="color:var(--gold);">Insights</span></h1>
+        <p style="color:var(--text2);">Reading tips, author spotlights, and literary commentary.</p>
+      </div>
+    </div>
+    <section>
+      <div class="section-inner">
+        <div class="blog-grid" id="blogGrid"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ===== CONTACT ===== -->
+  <div class="page" id="page-contact">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <h1>Get in <span style="color:var(--gold);">Touch</span></h1>
+      </div>
+    </div>
+    <div class="contact-grid">
+      <div>
+        <div class="form-group">
+          <label class="form-label">Your Name</label>
+          <input class="form-input" type="text" placeholder="Arjun Sharma" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input class="form-input" type="email" placeholder="hello@example.com" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Subject</label>
+          <select class="form-input form-select">
+            <option>General Enquiry</option>
+            <option>Book Submission</option>
+            <option>Technical Support</option>
+            <option>Partnership</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Message</label>
+          <textarea class="form-textarea" placeholder="Tell us how we can help…"></textarea>
+        </div>
+        <button class="btn-primary" onclick="showToast('Message sent! We\'ll reply within 24 hours.')">Send
+          Message</button>
+      </div>
+      <div>
+        <div
+          style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;margin-bottom:1.5rem;">
+          <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;">Contact Info</h3>
+          <p style="color:var(--text2);font-size:0.9rem;margin-bottom:0.75rem;">📧 support@bookverse.in</p>
+          <p style="color:var(--text2);font-size:0.9rem;margin-bottom:0.75rem;">📞 +91 98765 43210</p>
+          <p style="color:var(--text2);font-size:0.9rem;">📍 Mumbai, Maharashtra, India</p>
+        </div>
+        <div style="background:var(--glass);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;">
+          <h3 style="font-family:'Playfair Display',serif;margin-bottom:1rem;">Follow Us</h3>
+          <div class="socials">
+            <div class="social-btn">𝕏</div>
+            <div class="social-btn">in</div>
+            <div class="social-btn">f</div>
+            <div class="social-btn">▶</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== ABOUT ===== -->
+  <div class="page" id="page-about">
+    <div style="padding-top:64px;">
+      <div class="about-hero">
+        <div class="hero-tag" style="display:inline-flex;margin-bottom:1rem;">Our Story</div>
+        <h1 class="about-title">We Believe in the <span style="color:var(--gold);">Power of Stories</span></h1>
+        <p class="about-sub">BookVerse was built by book lovers for book lovers. We wanted a platform that feels as
+          thoughtful as the books it hosts — elegant, intelligent, and deeply personal.</p>
+      </div>
+      <div class="about-grid">
+        <div class="about-card">
+          <div class="about-icon">📚</div>
+          <h3 class="about-card-title">Our Mission</h3>
+          <p class="about-card-text">To make great literature accessible to everyone, everywhere — with smart tools that
+            help readers discover their next obsession.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🤖</div>
+          <h3 class="about-card-title">AI at the Core</h3>
+          <p class="about-card-text">Our recommendation engine learns from your reading behaviour and surfaces titles
+            that genuinely match your taste, not just bestseller lists.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🌍</div>
+          <h3 class="about-card-title">Global Reach</h3>
+          <p class="about-card-text">Books in 40+ languages from publishers and independent authors across 90 countries.
+            We celebrate diversity in storytelling.</p>
+        </div>
+        <div class="about-card">
+          <div class="about-icon">🔒</div>
+          <h3 class="about-card-title">Privacy First</h3>
+          <p class="about-card-text">Your reading history and data belong to you. We never sell your data and operate
+            under strict privacy principles.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <span class="logo">Book<span>Verse</span></span>
+          <p class="footer-desc">Your AI-powered literary companion. Discover, read, download and collect books that
+            matter to you.</p>
+          <div class="socials" style="margin-top:1.5rem;">
+            <div class="social-btn">𝕏</div>
+            <div class="social-btn">in</div>
+            <div class="social-btn">f</div>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Explore</h4>
+          <span class="footer-link" onclick="showPage('books')">Browse Books</span>
+          <span class="footer-link" onclick="showPage('ai')">AI Picks</span>
+          <span class="footer-link" onclick="showPage('blog')">Blog</span>
+          <span class="footer-link" onclick="showPage('author')">Authors</span>
+        </div>
+        <div class="footer-col">
+          <h4>Account</h4>
+          <span class="footer-link" onclick="openModal('authModal')">Sign In</span>
+          <span class="footer-link" onclick="showPage('dashboard')">Dashboard</span>
+          <span class="footer-link" onclick="showPage('wishlist')">Wishlist</span>
+          <span class="footer-link" onclick="showPage('downloads')">Downloads</span>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <span class="footer-link" onclick="showPage('about')">About Us</span>
+          <span class="footer-link" onclick="showPage('contact')">Contact</span>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2025 BookVerse. All rights reserved.</span>
+        <span>Made with ❤️ for readers everywhere</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- AUTH MODAL -->
+  <div class="modal-overlay" id="authModal" onclick="closeModalOutside(event,'authModal')">
+    <div class="modal">
+      <div class="modal-close" onclick="closeModal('authModal')">✕</div>
+      <h2 class="modal-title">Welcome Back</h2>
+      <p class="modal-sub">Sign in to access your library, wishlist and AI picks.</p>
+      <button class="google-btn">
+        <svg width="18" height="18" viewBox="0 0 18 18">
+          <path fill="#4285F4"
+            d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" />
+          <path fill="#34A853"
+            d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" />
+          <path fill="#FBBC05"
+            d="M3.964 10.71A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" />
+          <path fill="#EA4335"
+            d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" />
+        </svg>
+        Continue with Google
+      </button>
+      <div class="divider">or</div>
+      <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email"
+          placeholder="you@example.com" /></div>
+      <div class="form-group"><label class="form-label">Password</label><input class="form-input" type="password"
+          placeholder="••••••••" /></div>
+      <button class="btn-primary" style="width:100%;padding:13px;margin-top:0.5rem;"
+        onclick="closeModal('authModal');showToast('Signed in successfully!')">Sign In</button>
+      <p style="text-align:center;margin-top:1rem;font-size:0.85rem;color:var(--text3);">Don't have an account? <span
+          style="color:var(--gold);cursor:pointer;">Sign up free</span></p>
+    </div>
+  </div>
+
+  <!-- PREVIEW MODAL -->
+  <div class="modal-overlay" id="previewModal" onclick="closeModalOutside(event,'previewModal')">
+    <div class="modal" style="max-width:600px;max-height:80vh;overflow-y:auto;">
+      <div class="modal-close" onclick="closeModal('previewModal')">✕</div>
+      <h2 class="modal-title" id="previewTitle">Book Preview</h2>
+      <p class="modal-sub" id="previewAuthorSub">Sample Pages</p>
+      <div class="preview-content" id="previewText"></div>
+      <button class="btn-primary" style="width:100%;margin-top:1.5rem;"
+        onclick="closeModal('previewModal');showToast('Added to cart!')">Buy Full Book</button>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ============== DATA ==============
+    const books = [
+      { id: 'pride', title: 'Pride and Prejudice', author: 'Jane Austen', genre: 'Romance', pages: 432, lang: 'English', publisher: 'T. Egerton', price: 0, rating: 4.9, reviews: 12400, cover: 'https://covers.openlibrary.org/b/id/8739161-L.jpg', badge: 'Free', pdf: 'assets/books/pride1.pdf', desc: 'A witty, romantic novel about manners and matrimony in 19th century England. Elizabeth Bennet navigates social expectations and her own heart as she meets the proud Mr. Darcy.', year: 1813, preview: "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families, that he is considered as the rightful property of some one or other of their daughters.\n\n\"My dear Mr. Bennet,\" said his lady to him one day, \"have you heard that Netherfield Park is let at last?\"" },
+      { id: 'gatsby', title: 'The Great Gatsby', author: 'F. Scott Fitzgerald', genre: 'Fiction', pages: 180, lang: 'English', publisher: 'Scribner', price: 199, rating: 4.7, reviews: 9800, cover: 'https://covers.openlibrary.org/b/id/7222246-L.jpg', badge: '', desc: 'A tale of wealth, illusion, and the American Dream told through the enigmatic Jay Gatsby and his obsession with the beautiful Daisy Buchanan.', year: 1925, preview: "In my younger and more vulnerable years my father gave me some advice that I\'ve been turning over in my mind ever since. \"Whenever you feel like criticizing anyone,\" he told me, \"just remember that all the people in this world haven\'t had the advantages that you\'ve had.\"" },
+      { id: '1984', title: '1984', author: 'George Orwell', genre: 'Sci-Fi', pages: 328, lang: 'English', publisher: 'Secker & Warburg', price: 249, rating: 4.8, reviews: 15600, cover: 'https://covers.openlibrary.org/b/id/8575708-L.jpg', badge: 'Bestseller', desc: 'A dystopian masterpiece about totalitarianism, surveillance, and the fragility of truth. Winston Smith lives under the all-seeing eye of Big Brother.', year: 1949, preview: "It was a bright cold day in April, and the clocks were striking thirteen. Winston Smith, his chin nuzzled into his breast in an effort to escape the vile wind, slipped quickly through the glass doors of Victory Mansions, though not quickly enough to prevent a swirl of gritty dust from entering along with him." },
+      { id: 'to-kill', title: 'To Kill a Mockingbird', author: 'Harper Lee', genre: 'Fiction', pages: 376, lang: 'English', publisher: 'J.B. Lippincott', price: 299, rating: 4.8, reviews: 18200, cover: 'https://covers.openlibrary.org/b/id/8228691-L.jpg', badge: 'Classic', desc: 'Through the eyes of Scout Finch, this Pulitzer Prize-winning novel confronts racial injustice and moral growth in the American South.', year: 1960, preview: "When he was nearly thirteen, my brother Jem got his arm badly broken at the elbow. When it healed, and Jem's fears of never being able to play football were assuaged, he was seldom self-conscious about his injury." },
+      { id: 'brave', title: 'Brave New World', author: 'Aldous Huxley', genre: 'Sci-Fi', pages: 311, lang: 'English', publisher: 'Chatto & Windus', price: 229, rating: 4.5, reviews: 7300, cover: 'https://covers.openlibrary.org/b/id/8406786-L.jpg', badge: '', desc: 'A chilling vision of a future society controlled through pleasure, conditioning, and the elimination of individuality.', year: 1932, preview: "A squat grey building of only thirty-four stories. Over the main entrance the words, CENTRAL LONDON HATCHERY AND CONDITIONING CENTRE, and, in a shield, the World State\'s motto, COMMUNITY, IDENTITY, STABILITY." },
+      { id: 'mockingbird', title: 'The Alchemist', author: 'Paulo Coelho', genre: 'Fantasy', pages: 208, lang: 'English', publisher: 'HarperOne', price: 179, rating: 4.6, reviews: 22000, cover: 'https://covers.openlibrary.org/b/id/8224157-L.jpg', badge: 'New', desc: 'Santiago, a young shepherd, embarks on a journey to find treasure and discovers the secrets of the universe and his own heart.', year: 1988, preview: "The boy\'s name was Santiago. Dusk was falling as the boy arrived with his herd at an abandoned church. The roof had fallen in long ago, and an enormous sycamore had grown up where the sacristy had once been." },
+      { id: 'dune', title: 'Dune', author: 'Frank Herbert', genre: 'Sci-Fi', pages: 688, lang: 'English', publisher: 'Chilton Books', price: 349, rating: 4.9, reviews: 11500, cover: 'https://covers.openlibrary.org/b/id/8228300-L.jpg', badge: '', desc: 'On the desert planet Arrakis, young Paul Atreides discovers his destiny in a story of politics, ecology, religion and power.', year: 1965, preview: "A beginning is the time for taking the most delicate care that the balances are correct. This every sister of the Bene Gesserit knows. To begin your study of the life of Muad\'Dib, then take care that you first place him in his time." },
+      { id: 'sherlock', title: 'The Adventures of Sherlock Holmes', author: 'Arthur Conan Doyle', genre: 'Mystery', pages: 307, lang: 'English', publisher: 'George Newnes', price: 0, rating: 4.7, reviews: 8900, cover: 'https://covers.openlibrary.org/b/id/8231490-L.jpg', badge: 'Free', desc: 'Twelve short stories featuring the brilliant detective Sherlock Holmes and his faithful companion Dr. Watson solving crimes in Victorian London.', year: 1892, preview: "To Sherlock Holmes she is always THE woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex." },
+      { id: 'jane-eyre', title: 'Jane Eyre', author: 'Charlotte Brontë', genre: 'Romance', pages: 500, lang: 'English', publisher: 'Smith, Elder & Co.', price: 0, rating: 4.8, reviews: 9100, cover: 'https://covers.openlibrary.org/b/id/8739198-L.jpg', badge: 'Free', desc: 'The passionate story of orphan Jane Eyre, her life at Thornfield Hall, and her complicated relationship with the brooding Mr. Rochester.', year: 1847, preview: "There was no possibility of taking a walk that day. We had been wandering, indeed, in the leafless shrubbery an hour in the morning; but since dinner the cold winter wind had brought with it clouds so sombre, and a rain so penetrating, that further outdoor exercise was now out of the question." },
+      { id: 'hobbit', title: 'The Hobbit', author: 'J.R.R. Tolkien', genre: 'Fantasy', pages: 310, lang: 'English', publisher: 'Allen & Unwin', price: 399, rating: 4.9, reviews: 25000, cover: 'https://covers.openlibrary.org/b/id/6979861-L.jpg', badge: '', desc: 'Bilbo Baggins the hobbit is swept into an epic quest with a company of dwarves to reclaim a mountain kingdom from a dragon.', year: 1937, preview: "In a hole in the ground there lived a hobbit. Not a nasty, dirty, wet hole, filled with the ends of worms and an oozy smell, nor yet a dry, bare, sandy hole with nothing in it to sit down on or to eat: it was a hobbit-hole, and that means comfort." },
+      { id: 'crime', title: 'Crime and Punishment', author: 'Fyodor Dostoevsky', genre: 'Fiction', pages: 671, lang: 'English', publisher: 'The Russian Messenger', price: 0, rating: 4.7, reviews: 6500, cover: 'https://covers.openlibrary.org/b/id/8091016-L.jpg', badge: 'Free', desc: 'Raskolnikov, an impoverished student, commits a murder and grapples with guilt, morality and redemption in 19th century St. Petersburg.', year: 1866, preview: "On an exceptionally hot evening early in July a young man came out of the garret in which he lodged in S. Place and walked slowly, as though in hesitation, towards K. bridge." },
+      { id: 'little-women', title: 'Little Women', author: 'Louisa May Alcott', genre: 'Fiction', pages: 449, lang: 'English', publisher: 'Roberts Brothers', price: 0, rating: 4.6, reviews: 8700, cover: 'https://covers.openlibrary.org/b/id/8739201-L.jpg', badge: 'Free', desc: 'The beloved story of the four March sisters — Meg, Jo, Beth, and Amy — growing up in Civil War-era New England.', year: 1868, preview: "\"Christmas won\'t be Christmas without any presents,\" grumbled Jo, lying on the rug. \"It\'s so dreadful to be poor!\" sighed Meg, looking down at her old dress. \"I don\'t think it\'s fair for some girls to have plenty of pretty things, and other girls nothing at all,\" added little Amy." },
+    ];
+
+    const categories = [
+      { icon: '🏰', name: 'Fantasy', count: 1840 },
+      { icon: '🚀', name: 'Sci-Fi', count: 1230 },
+      { icon: '💕', name: 'Romance', count: 2100 },
+      { icon: '🔍', name: 'Mystery', count: 980 },
+      { icon: '📜', name: 'Classics', count: 760 },
+      { icon: '🧠', name: 'Self-Help', count: 1450 },
+      { icon: '🌍', name: 'Biography', count: 890 },
+      { icon: '😂', name: 'Humour', count: 540 },
+    ];
+
+    const blogs = [
+      { tag: 'Reading Tips', title: '10 Ways to Read More in 2025', excerpt: 'Building a reading habit is easier than you think. Here are science-backed strategies to help you read more books this year.', date: 'Mar 12, 2025', img: 'https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&q=80' },
+      { tag: 'Author Spotlight', title: 'The World of Jane Austen: A Deep Dive', excerpt: 'Two centuries later, why do Austen\'s novels still feel so fresh and relevant? We explore the genius behind her prose.', date: 'Mar 8, 2025', img: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&q=80' },
+      { tag: 'AI & Books', title: 'How AI is Transforming Book Discovery', excerpt: 'Recommendation engines have come a long way from "customers also bought". Here\'s what intelligent curation actually looks like.', date: 'Feb 28, 2025', img: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&q=80' },
+      { tag: 'Genre Guide', title: 'A Beginner\'s Guide to Science Fiction', excerpt: 'Not sure where to start with sci-fi? We\'ve curated the perfect entry points for newcomers to the genre.', date: 'Feb 20, 2025', img: 'https://images.unsplash.com/photo-1419640303358-44f0d27f48e7?w=400&q=80' },
+      { tag: 'Classics', title: 'Why You Should Read Dostoevsky in 2025', excerpt: 'Dense, difficult, and utterly transformative — here\'s why Crime and Punishment is worth every page.', date: 'Feb 14, 2025', img: 'https://images.unsplash.com/photo-1495640388908-05fa85288e61?w=400&q=80' },
+      { tag: 'Reading List', title: 'The 20 Best Fantasy Novels Ever Written', excerpt: 'From Middle-earth to Arrakis, our definitive ranking of the greatest fantasy books in literary history.', date: 'Feb 5, 2025', img: 'https://images.unsplash.com/photo-1500099817043-86d46000d58f?w=400&q=80' },
+    ];
+
+    // ============== STATE ==============
+    let cart = [];
+    let wishlist = [];
+    let downloads = ['pride', 'sherlock', 'jane-eyre', 'crime', 'little-women'];
+    let currentBook = null;
+    let isDark = true;
+
+    // ============== NAVIGATION ==============
+    function showPage(id) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      const page = document.getElementById('page-' + id);
+      if (page) page.classList.add('active');
+      const navLink = document.querySelector(`.nav-link[onclick*="'${id}'"]`);
+      if (navLink) navLink.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (id === 'books') renderBooksList();
+      if (id === 'cart') renderCart();
+      if (id === 'wishlist') renderWishlist();
+      if (id === 'downloads') renderDownloads();
+      if (id === 'ai') renderAIRecs();
+      if (id === 'dashboard') renderDashboard();
+      if (id === 'author') renderAuthorPage();
+      if (id === 'blog') renderBlog();
+      if (id === 'search') { document.getElementById('searchEmpty').style.display = 'block'; document.getElementById('searchResults').innerHTML = ''; }
+    }
+
+    function showBookDetail(id) {
+      currentBook = books.find(b => b.id === id) || books[0];
+      document.getElementById('detailBreadcrumb').textContent = currentBook.title;
+      const el = document.getElementById('bookDetailContent');
+      el.innerHTML = `
+    <div>
+      <div class="book-detail-cover"><img src="${currentBook.cover}" alt="${currentBook.title}" loading="lazy"/></div>
+    </div>
+    <div>
+      <h1 class="book-detail-title">${currentBook.title}</h1>
+      <div class="book-detail-author" onclick="showPage('author')">${currentBook.author}</div>
+      <div class="book-detail-rating">
+        <span class="stars">${'★'.repeat(Math.round(currentBook.rating))}${'☆'.repeat(5 - Math.round(currentBook.rating))}</span>
+        <span style="font-weight:600;">${currentBook.rating}</span>
+        <span class="rating-count">(${currentBook.reviews.toLocaleString()} reviews)</span>
+      </div>
+      <p class="book-detail-desc">${currentBook.desc}</p>
+      <div class="book-detail-meta">
+        <div class="meta-item"><div class="meta-label">Pages</div><div class="meta-value">${currentBook.pages}</div></div>
+        <div class="meta-item"><div class="meta-label">Language</div><div class="meta-value">${currentBook.lang}</div></div>
+        <div class="meta-item"><div class="meta-label">Year</div><div class="meta-value">${currentBook.year}</div></div>
+        <div class="meta-item"><div class="meta-label">Genre</div><div class="meta-value">${currentBook.genre}</div></div>
+        <div class="meta-item"><div class="meta-label">Publisher</div><div class="meta-value" style="font-size:0.8rem;">${currentBook.publisher}</div></div>
+        <div class="meta-item"><div class="meta-label">Price</div><div class="meta-value" style="color:var(--gold);">${currentBook.price === 0 ? 'Free' : '₹' + currentBook.price}</div></div>
+      </div>
+      <div class="book-detail-btns">
+        <button class="btn-primary" onclick="openPreview('${currentBook.id}')">📖 Read Preview</button>
+        ${currentBook.price === 0 ? `<button class="btn-teal" onclick="downloadBook('pride')">⬇ Download Free</button>` : `<button class="btn-gold" onclick="addToCart('${currentBook.id}')">🛒 Buy — ₹${currentBook.price}</button>`}
+        <button class="btn-outline" onclick="toggleWishlist('${currentBook.id}')">❤️ Wishlist</button>
+      </div>
+      <div class="reviews-section">
+        <h3 style="font-family:'Playfair Display',serif;font-size:1.4rem;margin-bottom:1.25rem;">Reader Reviews</h3>
+        ${[['Rohit Sharma', 'Amazing classic! Every page is worth it.', 5, '2 days ago'], ['Priya K.', 'The writing is beautiful and timeless.', 5, '1 week ago'], ['Dev M.', 'Dense at first but totally worth it.', 4, '2 weeks ago']].map(([n, t, r, d]) => `<div class="review-card"><div class="review-header"><div><div class="reviewer">${n}</div><div class="stars" style="font-size:0.9rem;">${'★'.repeat(r)}</div></div><div class="review-date">${d}</div></div><p class="review-text">${t}</p></div>`).join('')}
+      </div>
+    </div>
+  `;
+      const rel = document.getElementById('relatedBooks');
+      const related = books.filter(b => b.genre === currentBook.genre && b.id !== currentBook.id).slice(0, 4);
+      rel.innerHTML = `<h3 style="font-family:'Playfair Display',serif;font-size:1.5rem;margin-bottom:1.5rem;">Related Books</h3><div class="books-grid">${related.map(bookCard).join('')}</div>`;
+      showPage('detail');
+    }
+
+    // ============== RENDER ==============
+    function bookCard(b) {
+      const inWishlist = wishlist.includes(b.id);
+      return `<div class="book-card" onclick="showBookDetail('${b.id}')">
+    <div class="book-cover">
+      ${b.badge ? `<div class="badge ${b.badge === 'Free' ? 'free' : b.badge === 'New' ? 'new' : ''}">${b.badge}</div>` : ''}
+      <img src="${b.cover}" alt="${b.title}" loading="lazy"/>
+      <div class="book-cover-overlay"></div>
+      <div class="book-actions">
+        <div class="action-btn" title="Preview" onclick="event.stopPropagation();openPreview('${b.id}')">👁</div>
+        <div class="action-btn" title="Wishlist" onclick="event.stopPropagation();toggleWishlist('${b.id}')">${inWishlist ? '❤️' : '🤍'}</div>
+        <div class="action-btn" title="Cart" onclick="event.stopPropagation();addToCart('${b.id}')">🛒</div>
+      </div>
+    </div>
+    <div class="book-title">${b.title}</div>
+    <div class="book-author">${b.author}</div>
+    <div class="book-meta">
+      <div class="book-rating">★ ${b.rating}</div>
+      <div class="book-price ${b.price === 0 ? 'free' : ''}">${b.price === 0 ? 'Free' : '₹' + b.price}</div>
+    </div>
+  </div>`;
+    }
+
+    function renderHome() {
+      const fc = document.getElementById('featuredCarousel');
+      if (fc) fc.innerHTML = books.slice(0, 8).map(b => `<div class="carousel-item">${bookCard(b)}</div>`).join('');
+      const cg = document.getElementById('categoriesGrid');
+      if (cg) cg.innerHTML = categories.map(c => `<div class="cat-card" onclick="filterByCategory('${c.name}')"><div class="cat-icon">${c.icon}</div><div class="cat-name">${c.name}</div><div class="cat-count">${c.count.toLocaleString()} books</div></div>`).join('');
+      const tg = document.getElementById('trendingGrid');
+      if (tg) tg.innerHTML = books.slice(4, 10).map(bookCard).join('');
+    }
+
+    function renderBooksList() {
+      const g = document.getElementById('booksListGrid');
+      if (g) g.innerHTML = books.map(bookCard).join('');
+    }
+
+    function renderCart() {
+      const list = document.getElementById('cartItemsList');
+      const empty = document.getElementById('emptyCart');
+      if (!cart.length) { list.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      list.innerHTML = cart.map(id => { const b = books.find(x => x.id === id); if (!b) return ''; return `<div class="cart-item"><img class="cart-item-img" src="${b.cover}" alt="${b.title}"/><div><div class="cart-item-title">${b.title}</div><div class="cart-item-author">${b.author}</div></div><div class="cart-item-price">${b.price === 0 ? 'Free' : '₹' + b.price}</div><button class="cart-remove" onclick="removeFromCart('${b.id}')">✕</button></div>`; }).join('');
+      const sub = cart.reduce((s, id) => { const b = books.find(x => x.id === id); return s + (b ? b.price : 0); }, 0);
+      const tax = Math.round(sub * 0.18);
+      document.getElementById('subtotal').textContent = '₹' + sub;
+      document.getElementById('tax').textContent = '₹' + tax;
+      document.getElementById('orderTotal').textContent = '₹' + (sub + tax);
+    }
+
+    function renderWishlist() {
+      const g = document.getElementById('wishlistGrid');
+      const empty = document.getElementById('emptyWishlist');
+      if (!wishlist.length) { g.innerHTML = ''; empty.style.display = 'block'; return; }
+      empty.style.display = 'none';
+      g.innerHTML = wishlist.map(id => { const b = books.find(x => x.id === id); return b ? bookCard(b) : ''; }).join('');
+    }
+
+    function renderDownloads() {
+      const tbody = document.getElementById('downloadsList');
+      tbody.innerHTML = downloads.map(id => { const b = books.find(x => x.id === id); if (!b) return ''; return `<tr><td><img src="${b.cover}" alt="${b.title}"/></td><td>${b.title}</td><td>${b.author}</td><td><span style="background:rgba(45,212,191,0.1);color:var(--teal);padding:3px 10px;border-radius:99px;font-size:0.8rem;">PDF</span></td><td style="color:var(--text3);">Mar 2025</td><td><button class="btn-outline" style="padding:6px 14px;font-size:0.8rem;" onclick="showToast('Downloading ${b.title}...')">⬇ Re-download</button></td></tr>`; }).join('');
+    }
+
+    function renderAIRecs() {
+      const sets = [
+        { el: 'aiCards1', books: books.filter(b => ['Fiction', 'Romance', 'Classic'].includes(b.genre)).slice(0, 4), reason: 'Because you loved classics' },
+        { el: 'aiCards2', books: books.filter(b => ['Sci-Fi', 'Fantasy'].includes(b.genre)).slice(0, 4), reason: 'Trending in your genres' },
+        { el: 'aiCards3', books: books.filter(b => b.rating >= 4.7).slice(0, 4), reason: 'Highly rated hidden gems' },
+      ];
+      sets.forEach(s => {
+        const el = document.getElementById(s.el);
+        if (el) el.innerHTML = s.books.map(b => `<div class="ai-card" onclick="showBookDetail('${b.id}')"><img src="${b.cover}" alt="${b.title}"/><div class="ai-card-body"><div class="ai-card-reason">✦ ${s.reason}</div><div class="ai-card-title">${b.title}</div><div class="ai-card-author">${b.author}</div><div style="margin-top:6px;font-size:0.8rem;color:var(--gold);">★ ${b.rating}</div></div></div>`).join('');
+      });
+    }
+
+    function renderDashboard() {
+      const rv = document.getElementById('recentlyViewed');
+      if (rv) rv.innerHTML = books.slice(0, 5).map(b => `<div class="carousel-item">${bookCard(b)}</div>`).join('');
+    }
+
+    function renderAuthorPage() {
+      const ab = document.getElementById('authorBooks');
+      if (ab) ab.innerHTML = books.filter(b => b.author === 'Jane Austen' || b.id === 'pride' || b.id === 'jane-eyre').concat(books.slice(0, 4)).slice(0, 6).map(bookCard).join('');
+    }
+
+    function renderBlog() {
+      const g = document.getElementById('blogGrid');
+      if (g) g.innerHTML = blogs.map(b => `<div class="blog-card"><img class="blog-img" src="${b.img}" alt="${b.title}" loading="lazy"/><div class="blog-body"><div class="blog-tag">${b.tag}</div><h3 class="blog-title">${b.title}</h3><p class="blog-excerpt">${b.excerpt}</p><div class="blog-meta"><span>${b.date}</span><span style="color:var(--gold);">Read more →</span></div></div></div>`).join('');
+    }
+
+    // ============== ACTIONS ==============
+    function addToCart(id) {
+      const b = books.find(x => x.id === id);
+      if (!b) return;
+      if (b.price === 0) { downloadBook(id); return; }
+      if (!cart.includes(id)) { cart.push(id); updateCartCount(); showToast('Added to cart: ' + b.title, 'success'); }
+      else showToast('Already in your cart');
+    }
+
+    function removeFromCart(id) {
+      cart = cart.filter(x => x !== id);
+      updateCartCount();
+      renderCart();
+      showToast('Removed from cart');
+    }
+
+    function updateCartCount() {
+      document.getElementById('cartCount').textContent = cart.length;
+    }
+
+    function toggleWishlist(id) {
+      const b = books.find(x => x.id === id);
+      if (!b) return;
+      if (wishlist.includes(id)) { wishlist = wishlist.filter(x => x !== id); showToast('Removed from wishlist'); }
+      else { wishlist.push(id); showToast('Saved to wishlist ❤️', 'success'); }
+    }
+
+    // function downloadBook(id) {
+    //   if (!downloads.includes(id)) downloads.push(id);
+    //   const b = books.find(x => x.id === id);
+    //   if (!b) return;
+
+    //   const title = b.title;
+    //   const a = document.createElement('a');
+    //   a.style.display = 'none';
+
+    //   if (b.pdf) {
+    //     a.href = b.pdf;
+    //     a.download = b.pdf.split('/').pop();
+    //   } else {
+    //     const blob = new Blob([`%PDF-1.4\n1 0 obj\n<< /Title (${title}) /Author (BookVerse) >>\nendobj`], { type: 'application/pdf' });
+    //     const url = window.URL.createObjectURL(blob);
+    //     a.href = url;
+    //     a.download = `${title.replace(/\s+/g, '_')}_BookVerse.pdf`;
+    //     setTimeout(() => window.URL.revokeObjectURL(url), 100);
+    //   }
+
+    //   document.body.appendChild(a);
+    //   a.click();
+    //   document.body.removeChild(a);
+    //   showToast('Download started!', 'success');
+    // }
+    function downloadBook(id) {
+  const book = books.find(b => b.id === id);
+
+  if (!book) {
+    console.error("Book not found");
+    return;
+  }
+
+  const link = document.createElement('a');
+  link.href = book.pdf;
+  link.download = book.title + ".pdf";
+
+  document.body.appendChild(link); // IMPORTANT
+  link.click();
+  document.body.removeChild(link); // cleanup
+}
+
+    function checkout() {
+      cart = [];
+      updateCartCount();
+      renderCart();
+      showToast('Order placed successfully! 🎉', 'success');
+    }
+
+    function filterByCategory(cat) {
+      showPage('books');
+      setTimeout(() => {
+        const g = document.getElementById('booksListGrid');
+        if (g) g.innerHTML = books.filter(b => b.genre === cat).map(bookCard).join('');
+      }, 100);
+    }
+
+    function filterBooks(val, type) {
+      const g = document.getElementById('booksListGrid');
+      if (!g) return;
+      let filtered = [...books];
+      if (type === 'genre' && val) filtered = filtered.filter(b => b.genre === val);
+      if (type === 'sort') {
+        if (val.includes('Price')) filtered.sort((a, b) => a.price - b.price);
+        if (val.includes('Rating')) filtered.sort((a, b) => b.rating - a.rating);
+        if (val.includes('Newest')) filtered.sort((a, b) => b.year - a.year);
+      }
+      g.innerHTML = filtered.map(bookCard).join('');
+    }
+
+    function setPriceFilter(el, type) {
+      document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+      const g = document.getElementById('booksListGrid');
+      if (!g) return;
+      let filtered = type === 'free' ? books.filter(b => b.price === 0) : type === 'paid' ? books.filter(b => b.price > 0) : [...books];
+      g.innerHTML = filtered.map(bookCard).join('');
+    }
+
+    function liveSearch(q) {
+      const r = document.getElementById('searchResults');
+      const empty = document.getElementById('searchEmpty');
+      if (!q.trim()) { r.innerHTML = ''; empty.style.display = 'block'; return; }
+      const results = books.filter(b => b.title.toLowerCase().includes(q.toLowerCase()) || b.author.toLowerCase().includes(q.toLowerCase()) || b.genre.toLowerCase().includes(q.toLowerCase()));
+      empty.style.display = 'none';
+      r.innerHTML = results.length ? results.map(bookCard).join('') : '<p style="color:var(--text2);grid-column:1/-1;">No books found for "' + q + '"</p>';
+    }
+
+    function doSearch(q) {
+      document.getElementById('mainSearch').value = q;
+      liveSearch(q);
+    }
+
+    function handleNavSearch(e) {
+      if (e.key === 'Enter') {
+        const q = e.target.value;
+        showPage('search');
+        setTimeout(() => { document.getElementById('mainSearch').value = q; liveSearch(q); }, 100);
+      }
+    }
+
+    function openPreview(id) {
+      const b = books.find(x => x.id === id) || books[0];
+      document.getElementById('previewTitle').textContent = b.title;
+      document.getElementById('previewAuthorSub').textContent = 'By ' + b.author + ' · Preview';
+      document.getElementById('previewText').innerHTML = '<p>' + b.preview + '</p><p style="color:var(--text3);font-style:italic;margin-top:2rem;">— End of preview. Purchase or download to read the full book.</p>';
+      openModal('previewModal');
+    }
+
+    // ============== MODAL ==============
+    function openModal(id) { document.getElementById(id).classList.add('open'); }
+    function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    function closeModalOutside(e, id) { if (e.target === document.getElementById(id)) closeModal(id); }
+
+    // ============== TOAST ==============
+    let toastTimer;
+    function showToast(msg, type = '') {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.className = 'toast show' + (type ? ' ' + type : '');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ============== THEME ==============
+    function toggleTheme() {
+      isDark = !isDark;
+      document.body.classList.toggle('light-mode', !isDark);
+      document.getElementById('themeBtn').textContent = isDark ? '🌙' : '☀️';
+    }
+
+    // ============== SCROLL PROGRESS ==============
+    window.addEventListener('scroll', () => {
+      const bar = document.getElementById('readBar');
+      const total = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (window.scrollY / total * 100) + '%';
+    });
+
+    // ============== INIT ==============
+    renderHome();
+    updateCartCount();
+
+    // Intersection Observer for scroll animations
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.style.opacity = '1'; e.target.style.transform = 'translateY(0)'; }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.book-card,.cat-card,.testi-card,.blog-card').forEach(el => {
+      el.style.opacity = '0'; el.style.transform = 'translateY(20px)'; el.style.transition = 'opacity 0.5s ease,transform 0.5s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+
+</html>
