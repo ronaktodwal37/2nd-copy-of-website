@@ -6,7 +6,7 @@ A modern,full-featured web application designed for book lovers to **discover, e
 
 ## 🚀 Overview
 
-This platform is built using **HTML, CSS, and JavaScript**, with **Firebase** powering authentication, database, and file storage. It offers a complete ecosystem where users can browse books, view detailed information, download content, and purchase books — all within a beautifully designed a responsive interface.
+This platform is built using **HTML, CSS, and JavaScript**, with **Firebase** powering authentication, database, and file storage. It offers a complete ecosystem where users can browse books, view detailed information, download content, and purchase books — all within a beautifully designed an responsive interface.
 
 ---
 
