@@ -1,6 +1,6 @@
 # 📚 AI-Powered Novel & Book Platform
 
-A ,full-featured web application designed for book lovers to **discover, explore, read, download, and purchase novels and books** in one seamless experience. This project focuses on delivering a **next-level UI/UX with smooth animations, professional design, and scalable backend integration using Firebase**.
+A modern,full-featured web application designed for book lovers to **discover, explore, read, download, and purchase novels and books** in one seamless experience. This project focuses on delivering a **next-level UI/UX with smooth animations, professional design, and scalable backend integration using Firebase**.
 
 ---
 
