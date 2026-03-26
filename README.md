@@ -14,7 +14,7 @@ This platform is built using **HTML, CSS, and JavaScript**, with **Firebase** po
 
 ### 🔐 Authentication
 
-* Secure login & signup using Firebase Authentication
+* Secure login & signup using Firebase  Authentication
 * Google Sign-In integration
 * Password recovery system
 
