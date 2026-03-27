@@ -69,7 +69,7 @@ This platform is built using **HTML, CSS, and JavaScript**, with **Firebase** po
 
 * Home Page (Hero + Featured + Recommendations)
 * Books Listing Page
-* Book Detail Pa
+* Book Detail Pag
 * AI Recommendation Page
 * User Dashboard
 * Cart & Checkout Page
