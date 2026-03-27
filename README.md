@@ -43,7 +43,7 @@ This platform is built using **HTML, CSS, and JavaScript**, with **Firebase** po
 
 ### 🛒 Purchase System
 
-* Add books to ca
+* Add books to car
 * Checkout system (UI ready for payment integration)
 * Order history and tracking
 
